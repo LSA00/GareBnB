@@ -22,3 +22,5 @@ IDE Tool  : Eclipse, SQL Developer, VS Code, Github
 ### Usecase Diagram
 <img src="https://user-images.githubusercontent.com/108251593/185525564-7e22b931-aeec-45ce-922c-afd37b0763b7.png" width="500"/><img src="https://user-images.githubusercontent.com/108251593/185525780-46cfbc67-c0fd-471d-8a1d-a8e6792e5f85.png" width="500"/>
 <img src="https://user-images.githubusercontent.com/108251593/185525812-a4a7408d-ee81-41e8-a811-e8303bf6a28f.png" width="500"/><img src="https://user-images.githubusercontent.com/108251593/185525833-3e48fd76-2d1e-462e-8ff1-c7a8aa0343d4.png" width="500"/>
+### E-R Diagram
+![image](https://user-images.githubusercontent.com/108251593/185549467-592003ac-5149-4be1-b102-0a68e49f6021.png)
