@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="host_member"> 
+
+	
+<!-- 호스트 정보 수정 -->
+<update id="updateOneHost" parameterType="hashmap">
+
+<![CDATA[
+	UPDATE	HOST_MEMBER
+	SET	
+		HOST_EMAIL = #{HOST_EMAIL},
+		HOST_POST = #{HOST_POST},
+		HOST_ADDR1 = #{HOST_ADDR1},
+		HOST_ADDR2 = #{HOST_ADDR2},
+		HOST_INTRO = #{HOST_INTRO},
+		HOST_ACCOUNT = #{HOST_ACCOUNT},
+		HOST_BANK = #{HOST_BANK}
+	WHERE 
+		MEM_IDX = #{MEM_IDX}
+	]]>
+	
+</update>
+
+<!-- 호스트 전환 -->
+<insert id="insertHostMem" parameterType="hashmap">
+
+<![CDATA[
+		INSERT INTO HOST_MEMBER
+		(
+			MEM_IDX,
+			HOST_EMAIL,
+			HOST_POST,
+			HOST_ADDR1,
+			HOST_ADDR2,
+			HOST_JUMIN1,
+			HOST_JUMIN2,
+			HOST_INTRO,
+			HOST_ACCOUNT,
+			HOST_BANK
+		)
+		VALUES
+		(
+			#{MEM_IDX},
+			#{HOST_EMAIL},
+			#{HOST_POST},
+			#{HOST_ADDR1},
+			#{HOST_ADDR2},
+			#{HOST_JUMIN1},
+			#{HOST_JUMIN2},
+			#{HOST_INTRO}, 
+			#{HOST_ACCOUNT},
+			#{HOST_BANK}
+		)
+	]]>
+	</insert>
+	
+	<!--호스트 전환 레벨 업데이트--> 
+<update id="updateHostMem" parameterType="hashmap">
+<![CDATA[
+	UPDATE
+		MEMBER
+	SET 
+		MEM_LEVEL = 3
+	WHERE
+		MEM_IDX = #{MEM_IDX}
+]]>
+</update>
+
+	
+	
+
+	
+<!-- updateOneMemberDelete (회원 탈퇴) -->
+<update id="updateOneMemberDelete" parameterType="hashmap">
+<![CDATA[
+	UPDATE
+		MEMBER
+	SET 
+		MEM_LEVEL = 6
+	WHERE
+		MEM_ID = #{MEM_ID}
+]]>
+</update>
+
+
+
+<!-- selectHostConfirmList (호스트 회원 등록 요청 리스트) -->
+<select id="selectHostConfirmList" parameterType="hashmap" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				M.MEM_IDX,
+                M.MEM_LEVEL,
+                M.MEM_NAME,
+                M.MEM_ID,
+                M.MEM_PW,
+                M.MEM_PHONE
+			FROM MEMBER M 
+			INNER JOIN HOST_MEMBER H
+			ON
+				M.MEM_IDX = H.MEM_IDX
+            WHERE
+				M.MEM_LEVEL = '3'
+		]]>
+</select>
+
+
+
+<!-- selectConfirmMemberDetail (호스트 회원 등록 요청 상세) -->
+<select id="selectConfirmMemberDetail" parameterType="hashmap" resultType="hashmap">
+		
+		<![CDATA[
+			SELECT 
+			M.MEM_IDX,
+			M.MEM_ID,
+			M.MEM_PW,
+			M.MEM_NAME,
+			M.MEM_PHONE,
+			H.HOST_EMAIL,
+			H.HOST_ADDR1,
+			H.HOST_ADDR2,
+			H.HOST_BANK,
+			H.HOST_ACCOUNT,
+			H.HOST_INTRO
+			FROM
+				MEMBER M
+			INNER JOIN
+				HOST_MEMBER H
+			ON
+				M.MEM_IDX = H.MEM_IDX
+			WHERE
+				M.MEM_IDX = #{MEM_IDX}
+
+		]]>
+</select>
+
+
+<!-- updateHostConfirm (호스트 등록 승인) -->
+<update id="updateHostConfirm" parameterType="hashmap">
+		<![CDATA[
+		UPDATE
+			MEMBER
+		SET
+			MEM_LEVEL = '1'
+		WHERE 
+			MEM_IDX = #{MEM_IDX}
+		]]>
+</update>
+
+
+<!-- updateHostDeny (호스트 등록 거절) -->
+<update id="updateHostDeny" parameterType="hashmap">
+		<![CDATA[
+		UPDATE 
+			MEMBER
+		SET
+			MEM_LEVEL = '4'
+		WHERE
+			MEM_IDX = #{MEM_IDX}
+		]]>
+</update>
+
+
+<!-- 호스트회원정보가져오기 -->
+<select id="selectHostDetail" parameterType="hashmap" resultType="hashmap">
+	
+	<![CDATA[
+		SELECT	
+		        M.MEM_LEVEL,
+		        M.MEM_IDX,
+		        M.MEM_ID,
+		        M.MEM_PW,
+				M.MEM_NAME,
+				M.MEM_PHONE,
+				H.HOST_EMAIL,
+				H.HOST_POST,
+				H.HOST_ADDR1,
+				H.HOST_ADDR2,
+				H.HOST_JUMIN1,
+				H.HOST_JUMIN2,
+		        H.HOST_INTRO,
+				H.HOST_ACCOUNT,
+				H.HOST_BANK
+		FROM	MEMBER M INNER JOIN HOST_MEMBER H
+		ON      M.MEM_IDX = H.MEM_IDX
+		WHERE 	M.MEM_ID = #{MEM_ID}
+	]]>
+
+</select>
+
+</mapper>

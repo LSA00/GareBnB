@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="member">
+
+<!-- selectMemberDetail(아이디 중복확인, 회원정보 수정 폼, 회원정보 기본 페이지, 회원 상세 보기) -->
+<select id="selectMemberDetail" parameterType="hashmap" resultType="hashmap">
+<![CDATA[
+	SELECT
+		MEM_LEVEL, MEM_IDX, MEM_ID, MEM_PW, MEM_NAME, MEM_PHONE
+	FROM 
+		MEMBER
+	WHERE 
+		MEM_ID = #{MEM_ID}
+]]>
+</select>
+
+<!-- insertMember (회원가입 성공기능) -->
+<insert id="insertMember" parameterType="hashmap">
+<![CDATA[
+	INSERT INTO
+		MEMBER
+		(
+			MEM_IDX,
+			MEM_ID,
+			MEM_PW,
+			MEM_NAME,
+			MEM_PHONE
+		)
+	VALUES
+	 	(	
+			MEM_IDX_SEQ.NEXTVAL,
+			#{MEM_ID},
+			#{MEM_PW},
+			#{MEM_NAME},
+			#{MEM_PHONE}
+		)
+]]>
+</insert>
+
+<!-- selectOneIdPw (아이디 찾기, 비밀번호 찾기) -->
+<select id="selectOneIdPw" parameterType="hashmap" resultType="hashmap">
+<![CDATA[
+	SELECT 
+		MEM_IDX, MEM_ID, MEM_PW, MEM_NAME, MEM_PHONE
+	FROM 
+		MEMBER
+	WHERE 
+		MEM_ID = #{MEM_ID}
+		AND
+		MEM_PHONE = #{MEM_PHONE}
+]]>
+</select>
+
+<!-- updateOneMember (회원정보 수정 기능(일반회원)) -->
+<update id="updateOneMember" parameterType="hashmap">
+<![CDATA[
+	UPDATE
+		MEMBER
+	SET 
+		MEM_PW = #{MEM_PW},
+		MEM_NAME = #{MEM_NAME},
+		MEM_PHONE = #{MEM_PHONE}
+	WHERE
+		MEM_ID = #{MEM_ID}
+]]>
+</update>
+
+
+<!-- updateOneMemberDelete (회원 탈퇴) -->
+<update id="updateOneMemberDelete" parameterType="hashmap">
+<![CDATA[
+	UPDATE
+		MEMBER
+	SET 
+		MEM_LEVEL = 6
+	WHERE
+		MEM_ID = #{MEM_ID}
+]]>
+</update>
+
+<!-- selectMemberList (전체 회원 리스트) -->
+<select id="selectMemberList" parameterType="hashmap" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				MEM_IDX,
+				MEM_LEVEL,
+				MEM_NAME,
+				MEM_ID,
+				MEM_PW,
+				MEM_PHONE
+			FROM
+				MEMBER
+            ORDER BY
+                MEM_IDX DESC	
+		]]>
+</select>
+
+<!-- selectHostConfirmList (호스트 회원 등록 요청 리스트) -->
+<select id="selectHostConfirmList" parameterType="hashmap" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				MEM_LEVEL,
+				MEM_IDX,
+				MEM_NAME,
+				MEM_ID,
+				MEM_PW,
+				MEM_PHONE,
+			FROM
+				MEMBER	
+			WHERE
+				MEM_LEVEL = '3'		
+		]]>
+</select>
+
+<!-- selectConfirmMemberDetail (호스트 회원 등록 요청 상세) -->
+<select id="selectConfirmMemberDetail" parameterType="hashmap" resultType="hashmap">
+		
+		<![CDATA[
+			SELECT * 
+			FROM
+				MEMBER
+			INNER JOIN
+				HOST_MEMBER
+			ON
+				MEMBER.MEM_IDX = HOST_MEMBER.MEM_IDX
+			WHERE
+				MEM_LEVEL = '3'
+		]]>
+</select>
+
+<!-- updateMemberDeny (회원 정지 확인) -->
+<select id="updateMemberDeny" parameterType="hashmap" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				MEM_IDX,
+				MEM_LEVEL,
+				MEM_NAME,
+				MEM_ID,
+				MEM_PW,
+				MEM_PHONE
+			FROM
+				MEMBER	
+			WHERE
+				MEM_LEVEL = '5'		
+		]]>
+</select>
+
+<!-- updateMemberDelete (회원 삭제 확인) -->
+<select id="updateMemberDelete" parameterType="hashmap" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				MEM_IDX,
+				MEM_LEVEL,
+				MEM_NAME,
+				MEM_ID,
+				MEM_PW,
+				MEM_PHONE
+			FROM
+				MEMBER	
+			WHERE
+				MEM_LEVEL = '6'		
+		]]>
+</select>
+
+<!-- updateHostConfirm (호스트 등록 승인) -->
+<update id="updateHostConfirm" parameterType="hashmap">
+		UPDATE 
+			MEMBER
+		SET
+			MEM_LEVEL = '2'
+		WHERE 
+			MEM_IDX = #{MEM_IDX}
+</update>
+
+<!-- updateHostDeny (호스트 등록 거절) -->
+<update id="updateHostDeny" parameterType="hashmap">
+		UPDATE 
+			MEMBER
+		SET
+			MEM_LEVEL = '4'
+		WHERE
+			MEM_IDX = #{MEM_IDX}
+</update>
+</mapper>

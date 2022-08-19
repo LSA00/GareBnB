@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="reservation">
+
+	<!-- 예약 취소 -->
+	<update id="updateResCancel" parameterType="hashmap">
+		UPDATE 
+			RESERVATION
+		SET
+			RES_LEVEL = 4
+		WHERE 
+			RES_IDX = #{RES_IDX}
+	</update>
+	
+	
+	<!-- 예약 확정 -->
+	<update id="updateResConfirm" parameterType="hashmap">
+		UPDATE 
+			RESERVATION
+		SET
+			RES_LEVEL = 2
+		WHERE 
+			RES_IDX = #{RES_IDX}
+	</update>
+	
+	
+	
+	<!-- 예약 내역 -->
+	<select id="selectMemReserveList" parameterType="hashmap" resultType="hashmap">
+	
+		<![CDATA[
+			SELECT   
+					ROWNUM RM,
+					RES_CLI_ID CLI_ID,
+	      			RES_HOST_ID HOST_ID,
+					RES_IDX RES_IDX,        	--예약 번호
+	                RES_BOARD_NO,    		--예약된 게시글번호
+	                RES_BOARD_MODIFY_NO,	--예약된 게시글 수정번호
+	 				BOARD_ADDR1 ADDR1,
+					BOARD_ADDR2 ADDR2,
+					TO_CHAR(RES_DATE_START,'YYYY/MM/DD') RES_DATE_START,
+					TO_CHAR(RES_DATE_END,'YYYY/MM/DD') RES_DATE_END,
+					RES_LEVEL,		--예약 상태
+					RES_CARE_NO RES_CARE_NO,
+	 				RES_REJ,        	--거절사유
+					RES_REQ_DETAIL REQ_DETAIL,
+					TO_CHAR(((RES_DATE_END - RES_DATE_START)+1)*BOARD_PRICE,'FM999,999,999') PRICE,
+					BOARD_TITLE
+				
+			FROM	RESERVATION R INNER JOIN BOARD B
+			ON 	    R.RES_BOARD_NO=B.BOARD_NO
+            WHERE   R.RES_BOARD_MODIFY_NO = B.BOARD_MODIFY_NO
+            AND     RES_CLI_ID= #{MEM_ID}
+            AND     RES_LEVEL IN (0, 1, 2, 3, 4)
+			ORDER BY RES_LEVEL,RES_DATE_START
+		]]>
+
+	</select>
+
+	
+	<!-- 이용완료리스트 -->
+	<select id="selectOneResComList" parameterType="hashmap" resultType="hashmap">
+	
+		<![CDATA[
+
+			SELECT	
+				ROWNUM RM,
+				RES_CLI_ID,
+				RES_HOST_ID,
+				RES_IDX,
+				RES_BOARD_NO,
+				RES_BOARD_MODIFY_NO,
+				B.BOARD_ADDR1 BOARD_ADDR,
+				TO_CHAR(RES_DATE_START,'YYYY/MM/DD') RES_DATE_START,
+				TO_CHAR(RES_DATE_END,'YYYY/MM/DD') RES_DATE_END,
+				RES_CARE_NO,
+				RES_REQ_DETAIL,
+				TO_CHAR(((RES_DATE_END - RES_DATE_START)+1)*B.BOARD_PRICE,'FM999,999,999') PRICE,
+				BOARD_TITLE
+		
+			FROM	RESERVATION R INNER JOIN BOARD B
+				ON R.RES_BOARD_NO = B.BOARD_NO
+   	    		WHERE R.RES_BOARD_MODIFY_NO = B.BOARD_MODIFY_NO
+                AND RES_CLI_ID=#{MEM_ID}
+                AND RES_LEVEL =5
+                AND SYSDATE>RES_DATE_END
+                ORDER BY RES_DATE_END DESC
+		]]>
+
+	</select>
+	
+		<!-- 게시글에 필요한 예약 내역  -->
+	<select id="selectBoardReserve" parameterType="hashmap" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				RES_DATE_START,
+				RES_DATE_END
+
+			FROM
+				RESERVATION 
+
+			WHERE
+				RES_BOARD_NO = #{RES_BOARD_NO}
+			AND RES_LEVEL IN (0, 1, 2, 3)
+
+				
+		]]>
+	</select>
+	
+	<!-- 호스트가 보는 예약리스트 -->
+	<select id="selectReserve" parameterType="hashmap" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				MEM_ID,
+				MEM_NAME,
+				MEM_PHONE,
+				TO_CHAR(RES_DATE_START,'YYYY/MM/DD') RES_DATE_START,
+				TO_CHAR(RES_DATE_END,'YYYY/MM/DD') RES_DATE_END,
+				RES_LEVEL,
+				RES_CARE_NO,
+				RES_REQ_DETAIL,
+				RES_REJ,
+				RES_IDX,
+				RES_BOARD_NO,
+                RES_BOARD_MODIFY_NO,
+				TO_CHAR(((R.RES_DATE_END - R.RES_DATE_START)+1)*B.BOARD_PRICE,'FM999,999,999') PRICE,
+				R.RES_CLI_ID,
+				BOARD_TITLE
+			FROM
+				MEMBER M INNER JOIN RESERVATION R
+			ON
+				M.MEM_ID = R.RES_CLI_ID
+			INNER JOIN BOARD B
+			ON	R.RES_BOARD_NO = B.BOARD_NO AND R.RES_BOARD_MODIFY_NO = B.BOARD_MODIFY_NO
+			WHERE
+				R.RES_HOST_ID = #{MEM_ID}
+			AND RES_LEVEL IN (0, 1, 2, 3, 4)
+			ORDER BY RES_LEVEL,RES_DATE_START
+				
+		]]>
+	</select>
+	
+	
+	<!-- 호스트가 보는 이용완료리스트 -->
+	<select id="selectResFinish" parameterType="hashmap" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				RES_CLI_ID, 
+				TO_CHAR(RES_DATE_START,'YYYY/MM/DD') RES_DATE_START,
+				TO_CHAR(RES_DATE_END,'YYYY/MM/DD') RES_DATE_END,
+				RES_LEVEL,
+				RES_CARE_NO,
+				RES_REQ_DETAIL,
+				RES_REJ,
+				R.RES_IDX,
+				RES_BOARD_NO,
+                RES_BOARD_MODIFY_NO,
+				TO_CHAR(PAY_PRICE,'FM999,999,999') PRICE,
+				TO_CHAR(PAY_DATE,'YYYY/MM/DD') PAY_DATE,
+				BOARD_TITLE
+			FROM
+				PAYMENT P INNER JOIN RESERVATION R
+			ON
+				P.RES_IDX = R.RES_IDX
+			INNER JOIN BOARD B
+			ON	R.RES_BOARD_NO = B.BOARD_NO AND R.RES_BOARD_MODIFY_NO = B.BOARD_MODIFY_NO
+			WHERE
+				R.RES_HOST_ID = #{MEM_ID}
+			AND RES_LEVEL = 5
+			ORDER BY RES_DATE_END DESC
+				
+		]]>
+	</select>
+	
+	
+	<!-- 호스트 예약승인 -->
+	<update id="updateResApprove" parameterType="hashmap">
+		UPDATE 
+			RESERVATION
+		SET
+			RES_LEVEL=1
+		WHERE 
+			RES_IDX = #{RES_IDX}
+	</update>
+	
+	
+	<!-- 예약요청 전 상세보기 -->
+	<select id="selectReserveDetail" parameterType="hashmap" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				M.MEM_NAME,
+				M.MEM_PHONE,
+				B.BOARD_ADDR1,
+				B.BOARD_ADDR2
+			FROM
+				MEMBER M INNER JOIN BOARD B
+			ON
+				M.MEM_IDX = B.BOARD_HOST_IDX
+			WHERE
+				B.BOARD_NO = #{BOARD_NO}
+			AND	B.BOARD_MODIFY_NO = #{BOARD_MODIFY_NO}
+				
+		]]>
+	</select>	
+
+
+	<!-- 예약 거절 -->
+	<update id="updateResReject" parameterType="hashmap">
+		UPDATE 
+			RESERVATION
+		SET
+			RES_REJ = #{RES_REJ},
+			RES_LEVEL = 4
+		WHERE 
+			RES_IDX = #{RES_IDX}
+	</update>
+	
+	<!--클라이언트 예약하기  -->
+	<insert id="insertOneReserve" parameterType="hashmap" useGeneratedKeys="true" keyProperty="IDX">
+		<selectKey keyProperty="RES_IDX" resultType="string" order="BEFORE">
+			SELECT RES_IDX_SEQ.NEXTVAL FROM DUAL
+		</selectKey>		
+
+		<![CDATA[
+			INSERT INTO RESERVATION
+			(
+				RES_IDX,
+				RES_CLI_ID,
+				RES_HOST_ID,
+				RES_BOARD_NO,
+				RES_DATE_START,
+				RES_DATE_END,
+				RES_CARE_NO,
+				RES_REQ_DETAIL
+			)
+			VALUES
+			(
+				#{RES_IDX}, 
+				#{RES_CLI_ID},
+				#{MEM_ID},
+				#{BOARD_NO},
+				#{RES_DATE_START},
+				#{RES_DATE_END},
+				#{RES_CARE_NO},
+				#{RES_REQ_DETAIL}
+			)
+		]]>
+	</insert>
+
+
+	<!-- 결제/예약완료 -->
+	<update id="updateResCompl" parameterType="hashmap">
+		UPDATE 
+			RESERVATION
+		SET
+			RES_LEVEL = 3
+		WHERE 
+			RES_IDX = #{RES_IDX}
+	</update>
+	
+	
+	<!-- 결제정보입력 -->
+	<insert id="insertPayInfo" parameterType="hashmap">	
+
+		<![CDATA[
+			INSERT INTO PAYMENT
+			(
+				RES_IDX,
+				PAY_DATE,
+				PAY_LEVEL,
+				PG,
+				PAY_PRICE,
+				PAY_METHOD
+			)
+			VALUES
+			(
+				#{RES_IDX}, 
+				#{PAY_DATE},
+				3,
+				#{PG},
+				#{PAY_PRICE},
+				#{PAY_METHOD}
+			)
+		]]>
+	</insert>
+	
+	
+	<!-- 관리자 - 모든 예약 리스트 -->
+	<select id="selectAllresList" parameterType="hashmap" resultType="hashmap">
+		<![CDATA[
+			SELECT
+					RES_IDX,
+					RES_CLI_ID,
+					RES_HOST_ID,
+					RES_BOARD_NO,
+					RES_BOARD_MODIFY_NO,
+					RES_LEVEL				
+			FROM
+					RESERVATION
+				
+		]]>
+	</select>
+	
+	
+	<!-- 관리자 - 예약정보보기 -->
+	<select id="selectresInfo" parameterType="hashmap" resultType="hashmap">
+		<![CDATA[
+			SELECT
+					R.RES_IDX,
+					RES_LEVEL,
+					RES_CLI_ID,
+					RES_HOST_ID,
+					RES_BOARD_NO,
+					RES_BOARD_MODIFY_NO,
+					
+					RES_CARE_NO,
+					RES_REQ_DETAIL,
+					RES_REJ,
+					PG,
+					PAY_METHOD,
+					PAY_PRICE,
+					TO_CHAR(PAY_DATE,'YYYY/MM/DD') PAY_DATE
+			FROM
+					RESERVATION R LEFT JOIN PAYMENT P
+			ON		R.RES_IDX = P.RES_IDX
+			WHERE	R.RES_IDX = #{RES_IDX}
+			
+		]]>
+	</select>		
+	
+
+</mapper>

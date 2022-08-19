@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="review">
+
+
+	<!-- selectReviewOneMember(내 리뷰) -->
+	<select id="selectmyReview" parameterType="hashmap" resultType="hashmap">
+		<![CDATA[
+			SELECT 
+				REVIEW_IDX, RES_IDX, BOARD_NO, REVIEW_MEM_ID, REVIEW_DATE, SCORE, REVIEW_CONTENT
+			FROM 
+				REVIEW
+			WHERE 
+				RES_IDX=#{RES_IDX}
+				AND REVIEW_MEM_ID = #{MEM_ID}
+		]]>
+	</select>
+	
+	
+	<!-- insertReview (리뷰 작성) -->
+	<insert id="insertReview" parameterType="hashmap">
+		<![CDATA[
+			INSERT INTO REVIEW
+				(
+					REVIEW_IDX,
+					RES_IDX,
+					BOARD_NO,
+					REVIEW_MEM_ID,
+					REVIEW_DATE,
+					SCORE,
+					REVIEW_CONTENT
+				)
+			VALUES
+			 	( 
+					REVIEW_IDX_SEQ.NEXTVAL,
+					#{RES_IDX},
+					#{BOARD_NO},
+					#{MEM_ID},
+					SYSDATE,
+					#{SCORE},
+					#{REVIEW_CONTENT}
+				)
+		]]>
+	
+	</insert>
+	
+
+	
+	<!-- deleteReview (리뷰 삭제) -->
+	<delete id="deleteReview" parameterType="hashmap">
+		<![CDATA[
+			DELETE FROM REVIEW
+			WHERE REVIEW_IDX=#{REVIEW_IDX}
+		]]>
+	</delete>
+
+
+	<!-- updatemyReview (리뷰 수정) -->
+	<update id="updatemyReview" parameterType="hashmap">
+		<![CDATA[
+			UPDATE REVIEW
+			SET	SCORE=#{SCORE}, REVIEW_CONTENT=#{REVIEW_CONTENT}
+			WHERE REVIEW_IDX=#{REVIEW_IDX}
+			
+		]]>
+	</update>
+
+
+	<!-- selectReviewList: 게시글 하나에 대한 리뷰리스트-->
+	<select id="selectReviewList" parameterType="hashmap" resultType="hashmap">
+		<![CDATA[
+				SELECT
+					REVIEW_IDX,
+					RES_IDX,
+					BOARD_NO,
+					REVIEW_MEM_ID,
+					TO_CHAR(REVIEW_DATE,'YYYY/MM/DD') REVIEW_DATE,
+					SCORE,
+					REVIEW_CONTENT
+				FROM 
+					REVIEW
+				WHERE	BOARD_NO=#{BOARD_NO}
+		]]>
+	</select>
+</mapper>

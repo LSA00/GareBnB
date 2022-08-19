@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="login">
+
+<!-- selectId(로그인) -->
+<select id="selectId" parameterType="hashmap" resultType="hashmap">
+<![CDATA[
+	SELECT
+		MEM_LEVEL,
+		MEM_IDX,
+		MEM_ID,
+		MEM_PW
+		
+	FROM 
+		MEMBER
+	WHERE 
+		MEM_LEVEL IN (0,1,2,3,4)
+		AND
+		MEM_ID = #{MEM_ID}
+]]>
+</select>
+
+<!-- selectOneId (아이디 찾기) -->
+<select id="selectOneId" parameterType="hashmap" resultType="hashmap">
+<![CDATA[
+	SELECT 
+		MEM_ID
+	FROM 
+		MEMBER
+	WHERE 
+		MEM_NAME = #{MEM_NAME}
+		AND
+		MEM_PHONE = #{MEM_PHONE}
+		AND
+		MEM_LEVEL IN (1,2,3,4)
+]]>
+</select>
+
+<select id="selectOnePw" parameterType="hashmap" resultType="hashmap">
+<![CDATA[
+	SELECT 
+		MEM_ID
+	FROM 
+		MEMBER
+	WHERE 
+		MEM_ID = #{MEM_ID}
+		AND
+		MEM_NAME = #{MEM_NAME}
+		AND
+		MEM_PHONE = #{MEM_PHONE}
+		AND
+		MEM_LEVEL IN (1,2,3,4)
+]]>
+</select>
+
+<!-- updateOnePw (비밀번호 찾기) -->
+<update id="updateOnePw" parameterType="hashmap">
+<![CDATA[
+	UPDATE
+		MEMBER
+	SET
+		MEM_PW = #{MEM_PW}
+	WHERE 
+		MEM_ID = #{MEM_ID}
+		AND
+		MEM_LEVEL IN (1,2,3,4)
+]]>
+</update>
+
+<!-- selectAuth (아이디로 레벨리턴) -->
+<select id="selectAuth" parameterType="hashmap" resultType="hashmap">
+<![CDATA[
+	SELECT 
+		MEM_LEVEL,
+		MEM_IDX
+	FROM 
+		MEMBER
+	WHERE 
+		MEM_ID = #{MEM_ID}
+]]>
+</select>
+
+
+</mapper>

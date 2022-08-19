@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="file">
+
+<insert id="insertFile" parameterType="hashmap">
+	<![CDATA[
+   		INSERT INTO INPUT_FILE 
+		VALUES(
+			FILE_NUM_SEQ.NEXTVAL,
+			#{FILE_BOARD_TYPE},	
+			#{FILE_BOARD_IDX},		
+			#{FILE_ORGNAME},
+			#{FILE_STDNAME},
+			#{FILE_SIZE},
+			0,
+			#{FILE_LEVEL}
+		)
+	]]>
+</insert>
+
+<update id="deleteFile" parameterType="hashmap">
+<![CDATA[
+	UPDATE	INPUT_FILE
+	SET	
+		DEL_GB=1
+	WHERE 	FILE_BOARD_TYPE = #{FILE_BOARD_TYPE}
+	AND	FILE_BOARD_IDX = #{FILE_BOARD_IDX}	
+	AND	FILE_LEVEL = #{FILE_LEVEL}
+	]]>
+</update>
+
+<update id="updateFile" parameterType="hashmap">
+<![CDATA[
+	UPDATE	INPUT_FILE
+	SET	
+		DEL_GB=0
+	WHERE 	FILE_BOARD_TYPE = #{FILE_BOARD_TYPE}
+	AND	FILE_BOARD_IDX = #{FILE_BOARD_IDX}	//IF 게시글이냐 호스트냐
+	AND	FILE_LEVEL = #{FILE_LEVEL}
+	]]>
+</update>
+
+<select id="selectFile" parameterType="hashmap" resultType="hashmap">
+    <![CDATA[
+        SELECT
+            FILE_NUM,
+            FILE_BOARD_TYPE,
+            FILE_BOARD_IDX,
+            FILE_ORGNAME,
+            FILE_STDNAME,
+            FILE_SIZE,
+            DEL_GB,
+            FILE_LEVEL
+        FROM     INPUT_FILE
+        WHERE     FILE_BOARD_TYPE = #{FILE_BOARD_TYPE}
+        AND    FILE_BOARD_IDX = #{FILE_BOARD_IDX}
+        AND    FILE_LEVEL = #{FILE_LEVEL}
+        AND    DEL_GB=0
+    ]]>
+</select>
+
+</mapper>
