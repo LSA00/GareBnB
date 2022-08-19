@@ -14,11 +14,11 @@
 * 에어비엔비
 * 아고다
 ## 개발환경
-Language  : Java,JavaScript, HTML/CSS
-Database  : Oracle Database 11g
-Servers   : Apache Tomcat9.0
-Framework : Spring, Mybatis, Bootstrap, React
-IDE Tool  : Eclipse, SQL Developer, VS Code, Github
+* Language  : Java,JavaScript, HTML/CSS
+* Database  : Oracle Database 11g
+* Servers   : Apache Tomcat9.0
+* Framework : Spring, Mybatis, Bootstrap, React
+* IDE Tool  : Eclipse, SQL Developer, VS Code, Github
 ## Backend
 spring MVC 패턴 사용
 ## Frontend
