@@ -19,8 +19,5 @@ Database  : Oracle Database 11g
 Servers   : Apache Tomcat9.0
 Framework : Spring, Mybatis, Bootstrap, React
 IDE Tool  : Eclipse, SQL Developer, VS Code, Github
-### Usecase Diagram
-![그림1](https://user-images.githubusercontent.com/108251593/185524587-6ef90a70-58e6-432f-9c50-57bd1d184f81.png)
-![그림2](https://user-images.githubusercontent.com/108251593/185524593-538bdce9-8aa4-426c-b3fe-87efcb8ef373.png)
-![그림3](https://user-images.githubusercontent.com/108251593/185524602-0ee531cf-8c6f-4dd3-b681-a97c61ad2f2c.png)
-![그림4](https://user-images.githubusercontent.com/108251593/185524607-135c5fab-f039-43a5-807d-cdcd6305fb67.png)
+### 요구사항 정의서
+![image](https://user-images.githubusercontent.com/108251593/185525171-b60f3fed-f139-4182-8e4b-30ac8083eca5.png)
